@@ -1,0 +1,16 @@
+{
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file=.env src/server.js",
+    "start:dev": "node --env-file=.env --watch src/server.js"
+  },
+  "dependencies": {
+    "csvtojson": "^2.0.10",
+    "fastify": "^4.26.0",
+    "node-file-logger": "^0.9.5"
+  },
+  "engines": {
+    "node": ">=20.12.1"
+  }
+}

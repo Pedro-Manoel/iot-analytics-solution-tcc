@@ -1,0 +1,32 @@
+[
+  {
+    "operation": "shift",
+    "spec": {
+      "time_stamp": "date",
+      "data": {
+        "*": {
+          "0": "data[&1].id",
+          "1": "data[&1].last_seen",
+          "2": "data[&1].rssi",
+          "3": "data[&1].channel_status",
+          "4": "data[&1].confidence",
+          "5": "data[&1].humidity",
+          "6": "data[&1].temperature",
+          "7": "data[&1].pressure",
+          "8": "data[&1].pm2_5"
+        }
+      }
+    }
+  },
+  {
+    "operation": "shift",
+    "spec": {
+      "data": {
+        "*": {
+          "@": "data[&1]",
+          "@(2,date)": "data[&1].date"
+        }
+      }
+    }
+  }
+]

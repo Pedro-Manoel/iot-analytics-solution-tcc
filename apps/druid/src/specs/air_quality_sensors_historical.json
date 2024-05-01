@@ -1,0 +1,43 @@
+{
+  "type": "kafka",
+  "spec": {
+    "ioConfig": {
+      "type": "kafka",
+      "consumerProperties": {
+        "bootstrap.servers": "kafka:29092"
+      },
+      "topic": "processed_air_sensors_historical_data",
+      "inputFormat": {
+        "type": "json"
+      },
+      "useEarliestOffset": true
+    },
+    "tuningConfig": {
+      "type": "kafka"
+    },
+    "dataSchema": {
+      "dataSource": "air_quality_sensors_historical",
+      "timestampSpec": {
+        "column": "date",
+        "format": "iso"
+      },
+      "dimensionsSpec": {
+        "dimensions": [
+          "municipality"
+        ]
+      },
+      "granularitySpec": {
+        "queryGranularity": "hour",
+        "rollup": true,
+        "segmentGranularity": "month"
+      },
+      "metricsSpec": [
+        {
+          "name": "sum_pm2_5",
+          "type": "doubleSum",
+          "fieldName": "pm2_5"
+        }
+      ]
+    }
+  }
+}

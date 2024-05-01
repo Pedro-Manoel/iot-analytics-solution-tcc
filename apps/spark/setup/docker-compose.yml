@@ -1,0 +1,34 @@
+version: "4"
+
+services:
+  spark-master:
+    image: bitnami/spark:3.5.0
+    container_name: spark-master
+    ports:
+      - 7077:7077
+      - 8089:8080
+      - 4040:4040
+    volumes:
+      - ../src:/src
+    environment:
+      SPARK_MODE: master
+
+  spark-worker:
+    image: bitnami/spark:3.5.0
+    container_name: spark-worker
+    ports:
+      - 18081:8081
+    volumes:
+      - ../src:/src
+    depends_on:
+      - spark-master
+    environment:
+      SPARK_MODE: worker
+      SPARK_MASTER_URL: spark://spark-master:7077
+      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 2G
+
+networks:
+  default:
+    name: iot_analytics
+    external: true

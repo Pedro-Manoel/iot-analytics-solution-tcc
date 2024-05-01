@@ -1,0 +1,189 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+version: "4"
+
+services:
+  # Metadata storage
+  postgres:
+    container_name: druid-postgres
+    image: postgres:16.0
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    volumes:
+      - metadata_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: FoolishPassword
+      POSTGRES_USER: druid
+      POSTGRES_DB: druid
+
+  # Deep storage
+  minio:
+    image: minio/minio
+    container_name: druid-minio
+    ports:
+      - 9001:9001
+      - 9000:9000
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password
+      MINIO_DOMAIN: minio
+    command: ["server", "/data", "--console-address", ":9001"]
+
+  mc:
+    image: minio/mc
+    container_name: druid-minio-mc
+    environment:
+      AWS_ACCESS_KEY_ID: admin
+      AWS_SECRET_ACCESS_KEY: password
+      AWS_REGION: us-east-1
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until (/usr/bin/mc config host add minio http://druid-minio:9000 admin password) do echo '...waiting...' && sleep 1; done;
+      /usr/bin/mc rm -r --force minio/indata;
+      /usr/bin/mc mb minio/indata;
+      /usr/bin/mc anonymous set public minio/indata;
+      /usr/bin/mc rm -r --force minio/deepstorage;
+      /usr/bin/mc mb minio/deepstorage;
+      /usr/bin/mc anonymous set public minio/deepstorage;
+      tail -f /dev/null
+      "
+
+  # Need 3.5 or later for container nodes
+  zookeeper:
+    container_name: druid-zookeeper
+    image: zookeeper:3.9.1
+    restart: unless-stopped
+    ports:
+      - 32181:2181
+    environment:
+      ZOO_MY_ID: 1
+
+  # Druid
+  coordinator:
+    image: apache/druid:28.0.1
+    restart: unless-stopped
+    container_name: druid-coordinator
+    volumes:
+      - shared:/opt/shared
+      - coordinator_var:/opt/druid/var
+    depends_on:
+      - zookeeper
+      - postgres
+      - minio
+    ports:
+      - 28081:8081
+    command:
+      - coordinator
+    env_file:
+      - environment
+
+  broker:
+    image: apache/druid:28.0.1
+    restart: unless-stopped
+    container_name: druid-broker
+    volumes:
+      - broker_var:/opt/druid/var
+    depends_on:
+      - zookeeper
+      - postgres
+      - minio
+      - coordinator
+    ports:
+      - 18082:8082
+    command:
+      - broker
+    env_file:
+      - environment
+
+  historical:
+    image: apache/druid:28.0.1
+    restart: unless-stopped
+    container_name: druid-historical
+    volumes:
+      - shared:/opt/shared
+      - historical_var:/opt/druid/var
+    depends_on:
+      - zookeeper
+      - postgres
+      - minio
+      - coordinator
+    ports:
+      - 18083:8083
+    command:
+      - historical
+    env_file:
+      - environment
+
+  middlemanager:
+    image: apache/druid:28.0.1
+    restart: unless-stopped
+    container_name: druid-middlemanager
+    volumes:
+      - shared:/opt/shared
+      - middle_var:/opt/druid/var
+    depends_on:
+      - zookeeper
+      - postgres
+      - minio
+      - coordinator
+    ports:
+      - 18091:8091
+      - 8100-8105:8100-8105
+    command:
+      - middleManager
+    env_file:
+      - environment
+
+  router:
+    image: apache/druid:28.0.1
+    restart: unless-stopped
+    container_name: druid-router
+    volumes:
+      - router_var:/opt/druid/var
+    depends_on:
+      - zookeeper
+      - postgres
+      - minio
+      - coordinator
+    ports:
+      - 18888:8888
+    command:
+      - router
+    env_file:
+      - environment
+
+volumes:
+  minio_data: {}
+  metadata_data: {}
+  middle_var: {}
+  historical_var: {}
+  broker_var: {}
+  coordinator_var: {}
+  router_var: {}
+  shared: {}
+
+networks:
+  default:
+    name: iot_analytics
+    external: true

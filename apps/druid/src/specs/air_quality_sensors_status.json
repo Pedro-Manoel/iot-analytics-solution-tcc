@@ -1,0 +1,62 @@
+{
+  "type": "kafka",
+  "spec": {
+    "ioConfig": {
+      "type": "kafka",
+      "consumerProperties": {
+        "bootstrap.servers": "kafka:29092"
+      },
+      "topic": "processed_air_sensors_status_data",
+      "inputFormat": {
+        "type": "json"
+      },
+      "useEarliestOffset": true,
+      "appendToExisting": false
+    },
+    "tuningConfig": {
+      "type": "kafka"
+    },
+    "dataSchema": {
+      "dataSource": "air_quality_sensors_status",
+      "timestampSpec": {
+        "column": "date",
+        "format": "iso"
+      },
+      "dimensionsSpec": {
+        "dimensions": [
+          "id",
+          "last_reading_date",
+          "name",
+          "municipality",
+          "status",
+          "last_reading_time_diff ",
+          {
+            "type": "double",
+            "name": "latitude"
+          },
+          {
+            "type": "double",
+            "name": "longitude"
+          }
+        ]
+      },
+      "granularitySpec": {
+        "queryGranularity": "minute",
+        "rollup": true,
+        "segmentGranularity": "day"
+      },
+      "metricsSpec": [
+        {
+          "name": "sum_confidence",
+          "type": "longSum",
+          "fieldName": "confidence"
+        },
+        {
+          "name": "sum_wifi",
+          "type": "longSum",
+          "fieldName": "wifi"
+        }
+      ]
+    }
+  }
+}

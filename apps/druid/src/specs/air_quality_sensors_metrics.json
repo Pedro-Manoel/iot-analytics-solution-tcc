@@ -1,0 +1,59 @@
+{
+  "type": "kafka",
+  "spec": {
+    "ioConfig": {
+      "type": "kafka",
+      "consumerProperties": {
+        "bootstrap.servers": "kafka:29092"
+      },
+      "topic": "processed_air_sensors_metrics_data",
+      "inputFormat": {
+        "type": "json"
+      },
+      "useEarliestOffset": true
+    },
+    "tuningConfig": {
+      "type": "kafka"
+    },
+    "dataSchema": {
+      "dataSource": "air_quality_sensors_metrics",
+      "timestampSpec": {
+        "column": "date",
+        "format": "iso"
+      },
+      "dimensionsSpec": {
+        "dimensions": [
+          "id",
+          "municipality"
+        ]
+      },
+      "granularitySpec": {
+        "queryGranularity": "minute",
+        "rollup": true,
+        "segmentGranularity": "day"
+      },
+      "metricsSpec": [
+        {
+          "name": "sum_pm2_5",
+          "type": "doubleSum",
+          "fieldName": "pm2_5"
+        },
+        {
+          "name": "sum_humidity",
+          "type": "doubleSum",
+          "fieldName": "humidity"
+        },
+        {
+          "name": "sum_temperature",
+          "type": "doubleSum",
+          "fieldName": "temperature"
+        },
+        {
+          "name": "sum_pressure",
+          "type": "doubleSum",
+          "fieldName": "pressure"
+        }
+      ]
+    }
+  }
+}
