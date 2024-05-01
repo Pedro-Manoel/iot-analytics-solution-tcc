@@ -69,6 +69,9 @@ No fluxo de processamento, o Apache Kafka disponibiliza os dados brutos para o A
 **Funcionamento do Spark Structured Streaming**
 ![Funcionamento do Spark Structured Streaming](/.github/assets/images/operation_spark.png)
 
+**Processamentos do Spark Structured Streaming**
+![Funcionamento do Spark Structured Streaming](/.github/assets/images/spark_structured_streaming.png)
+
 ---
 
 
