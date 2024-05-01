@@ -21,7 +21,7 @@
 
 Solução de IoT Analytics, desenvolvida como parte do Trabalho de Conclusão de Curso (TCC) do curso de Ciência da Computação da Universidade Federal de Campina Grande (UFCG), essa ferramenta foi projetada para trabalhar com sensores ambientais. Seu principal objetivo é coletar, processar, armazenar, analisar e visualizar os dados métricos do ambiente e dos próprios sensores em tempo real, além de permitir análises históricas. Essa solução foi aplicada com sucesso à [rede de sensores de qualidade do ar no estado do Acre](https://www.ufac.br/site/noticias/2023/projeto-desenvolvido-na-ufac-monitora-qualidade-do-ar-no-acre), Brasil. Isso serviu como um teste prático para verificar sua viabilidade e eficácia. 
 
-### 📦 Arquitetura <a name = "arquitetura"></a>
+## 📦 Arquitetura <a name = "arquitetura"></a>
 A arquitetura foi meticulosamente projetada seguindo os princípios de uma arquitetura de microsserviços, proporcionando um sistema robusto e flexível, ideal para lidar com os desafios únicos apresentados pelos dados da Internet das Coisas (IoT).
 
 A arquitetura proposta é composta por um conjunto de aplicações, cada uma desempenhando um serviço essencial. As principais aplicações são provenientes da [Fundação Apache](https://www.apache.org/), uma respeitada organização sem fins lucrativos dedicada a apoiar projetos de código aberto. A escolha de utilizar exclusivamente componentes de código aberto permite uma personalização e flexibilidade sem precedentes, permitindo que a arquitetura seja adaptada para atender a uma variedade de necessidades.
@@ -30,7 +30,7 @@ Além disso, a arquitetura foi construída para suportar características-chave 
 
 ![Arquitetura no Docker](/.github/assets/images/architecture.png)
 
-#### 🛠️ Componentes  <a name = "componentes"></a>
+### 🛠️ Componentes  <a name = "componentes"></a>
 - [Apache NiFi](https://nifi.apache.org/): Esta aplicação é a responsável pela ingestão de dados em tempo real.
 - [Apache Kafka](https://kafka.apache.org/): Esta aplicação é a responsável pelo gerenciamento e distribuição dos diferentes fluxos de dados entre as aplicações.
 - [Apache Spark](https://spark.apache.org/): Esta aplicação é a responsável pelo processamento de dados em tempo real.
@@ -38,7 +38,7 @@ Além disso, a arquitetura foi construída para suportar características-chave 
 - [Apache Superset](https://superset.apache.org/): Esta aplicação é a responsável pela visualização dos dados em tempo real e em série histórica.
 - [Node.js](https://nodejs.org/): Esta aplicação foi utilizada para desenvolver serviços auxiliares que são utilizados pelo Apache NiFi.
 
-#### ✨ Conteinerização <a name = "docker"></a>
+### ✨ Conteinerização <a name = "docker"></a>
 Foi utilizado o [Docker](https://www.docker.com/) para empacotar cada aplicação e suas dependências em um recipiente virtual. Cada componente (NiFi, Kafka, Spark, Druid, Superset e os Serviços Node.js) tem um container dedicado, gerenciado por um arquivo Docker Compose. Foi criado um arquio Dockerfile específico para os serviços Node.js, contendo instruções para construir suas respectivas imagens Docker.
 
 Cada container contém apenas os serviços e ferramentas necessários para seu funcionamento. Todos os containers são executados na mesma rede, `iot_analytics`, para permitir a comunicação entre eles. Os volumes de dados para cada aplicação são nomeados para garantir a persistência dos dados ao reiniciar a aplicação.
@@ -93,7 +93,7 @@ No fluxo de visualização, o Apache Druid disponibiliza os dados para o Apache 
 ![Dashboard de Dados Históricos](./.github/assets/images/dashboard_04.png)
 
 
-### 🚀 Execução <a name = "execucao"></a>
+## 🚀 Execução <a name = "execucao"></a>
 
 Para facilitar a execução do projeto, foi criado um [Makefile](https://makefiletutorial.com/). O Makefile é um arquivo que contém um conjunto de diretivas para compilar e executar um projeto, automatizando tarefas repetitivas e simplificando a execução de comandos.
 
