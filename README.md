@@ -50,6 +50,8 @@ A arquitetura é estruturada em quatro fluxos principais: **Ingestão**, **Proce
 **Fluxos da arquitetura**
 ![Fluxos da arquitetura](/.github/assets/images/streams.png)
 
+---
+
 >**Ingestão**
 
 No fluxo de ingestão, o Apache NiFi é encarregado de coletar os dados dos sensores da PurpleAir e enviá-los para o Apache Kafka. O Kafka atua num sistema de produtor e consumidor, onde o Apache NiFi atua como produtor.
@@ -57,6 +59,7 @@ No fluxo de ingestão, o Apache NiFi é encarregado de coletar os dados dos sens
 **Funcionamento do Kafka**
 ![Funcionmento do Kafka](/.github/assets/images/operation_kafka.png)
 
+---
 
 >**Processamento**
 
@@ -65,6 +68,9 @@ No fluxo de processamento, o Apache Kafka disponibiliza os dados brutos para o A
 
 **Funcionamento do Spark Structured Streaming**
 ![Funcionamento do Spark Structured Streaming](/.github/assets/images/operation_spark.png)
+
+---
+
 
 >**Armazenamento**
 
@@ -75,6 +81,8 @@ No fluxo de armazenamento, o Apache Kafka disponibiliza os dados processados par
 
 **Funcionamento da Integração do Kafka com o Druid**
 ![Funcionamento da Integração do Kafka com o Druid](/.github/assets/images/operation_kafka_and_druid.png)
+
+---
 
 >**Visualização**
 
@@ -97,6 +105,8 @@ No fluxo de visualização, o Apache Druid disponibiliza os dados para o Apache 
 
 Para facilitar a execução do projeto, foi criado um [Makefile](https://makefiletutorial.com/). O Makefile é um arquivo que contém um conjunto de diretivas para compilar e executar um projeto, automatizando tarefas repetitivas e simplificando a execução de comandos.
 
+---
+
 > **Pré-requisitos**
 1. No arquivo Makefile, atribua o nome de usuário do [Docker Hub](https://hub.docker.com/) à variável `DOCKER_USER`. Isso permitirá o envio da imagem modificada do Superset para o Docker Hub.
 2. Atribua uma chave de API do [MapBox](https://www.mapbox.com/) à variável `MAPBOX_API_KEY` para permitir a visualização de mapas no Apache Superset. Essa atribuição é feita no arquivo `apps/superset/setup/docker/.env`.
@@ -105,34 +115,45 @@ Para facilitar a execução do projeto, foi criado um [Makefile](https://makefil
       make create-network
     ```
 
+---
+
 > **Configuração para Execução**
 
 1. Criação e execução dos containers das APIs:
+   
     1.1 Geração das imagens das APIs:
     ```bash
       make apis-build
     ```
+    
     1.2 Criação dos containers das APIs:
     ```bash
       make apis-run
     ```
+    
     1.3 Execução dos containers das APIs:
     ```bash
       make apis-start
     ```
 2. Geração e utilização da imagem modificada do Superset:
-    2.1 Geração da imagem:
+
+   2.1 Geração da imagem:
     ```bash
       make superset-build
     ```
-    2.2 Substitua a imagem do Superset no seu `docker-compose.yml` pela imagem gerada no passo anterior. Este arquivo está localizado em `apps/superset/setup`.
+    
+   2.2 Substitua a imagem do Superset no seu `docker-compose.yml` pela imagem gerada no passo anterior. Este arquivo está localizado em `apps/superset/setup`.
 
 3. Criação e execução dos containers dos APPs:
     ```bash
       make apps-up
     ```
+
+---
+
 > **Executando**
 1. Configuração do Apache Kafka:
+   
     1.1 Crie os tópicos listados abaixo, que são utilizados para os fluxos de dados entre as aplicações. Configure de acordo com sua necessidade, mas recomendo alocar 2 dias para os tópicos do tipo `raw` e 7 dias para os tópicos do tipo `processed`:
       * `raw_air_sensors_data`
       * `raw_air_sensors_historical_data`
@@ -141,34 +162,43 @@ Para facilitar a execução do projeto, foi criado um [Makefile](https://makefil
       * `processed_air_sensors_historical_data`
 
 2. Configuração do Apache NiFi:
-    2.1 Importe os templates localizados em `apps/nifi/src/templates`.
-    2.2 Configure o DistributedMapCacheServer e o DistributedMapCacheClientService.
-    2.3 Inicie os grupos de processos dos templates importados.
+
+   2.1 Importe os templates localizados em `apps/nifi/src/templates`.
+
+   2.2 Configure o DistributedMapCacheServer e o DistributedMapCacheClientService.
+
+   2.3 Inicie os grupos de processos dos templates importados.
 
 3. Configuração do Apache Spark (execute cada comando em um terminal separado):
-    3.1 Inicialize o processamento de dados brutos das métricas captadas pelos sensores:
+
+   3.1 Inicialize o processamento de dados brutos das métricas captadas pelos sensores:
     ``` bash
     make spark-submit job=process_air_sensors_metrics_data
     ```
-    3.2 Inicialize o processamento de dados brutos do status dos sensores:
+
+   3.2 Inicialize o processamento de dados brutos do status dos sensores:
     ``` bash
     make spark-submit job=process_air_sensors_status_data
     ```
-    3.3 Inicialize o processamento de dados históricos dos sensores:
+
+   3.3 Inicialize o processamento de dados históricos dos sensores:
     ``` bash
     make spark-submit job=process_air_sensors_historical_data
     ```
-4. Configuração do Apache Druid:
+5. Configuração do Apache Druid:
     4.1 Inicialize os processos de ingestão dos dados dos sensores, criando um processo de ingestão para cada `spec` localizado em `apps/druid/src/specs`.
 
-5. Configuração do Apache Superset:
+6. Configuração do Apache Superset:
     5.1 Importe os dashboards localizados em `apps/superset/src/dashboards`.
+
+---
 
 > **Finalizando**
 1. Para finalizar a execução dos containers dos APPs:
     ```bash
       make apps-stop
     ```
+    
 2. Para finalizar a execução dos containers das APIs:
     ```bash
       make apis-stop
