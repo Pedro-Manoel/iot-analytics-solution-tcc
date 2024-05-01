@@ -114,7 +114,8 @@ Para facilitar a execução do projeto, foi criado um [Makefile](https://makefil
 1. No arquivo Makefile, atribua o nome de usuário do [Docker Hub](https://hub.docker.com/) à variável `DOCKER_USER`. Isso permitirá o envio da imagem modificada do Superset para o Docker Hub.
 2. Atribua uma chave de API do [MapBox](https://www.mapbox.com/) à variável `MAPBOX_API_KEY` para permitir a visualização de mapas no Apache Superset. Essa atribuição é feita no arquivo `apps/superset/setup/docker/.env`.
 2. Crie a rede `iot_analytics` no Docker usando o comando abaixo:
-    ```bash
+
+   ```bash
       make create-network
     ```
 
