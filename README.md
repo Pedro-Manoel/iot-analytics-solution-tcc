@@ -5,7 +5,7 @@
   </h3>
 </h1>
 
-> Para mais detalhes sobre a solução, acesse o [TCC]().
+> Para mais detalhes sobre a solução, acesse o [TCC](http://dspace.sti.ufcg.edu.br:8080/jspui/handle/riufcg/38298)
 
 ## 📑 Sumário
 
