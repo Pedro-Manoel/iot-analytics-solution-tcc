@@ -17,7 +17,7 @@ app.get('/', async (_, reply) => {
 
     reply.code(200).send({ token });
   } catch (error) {
-    log.Error('Internal server error', 'GET /token', 'app.get', error);
+    log.Error('Internal server error', 'GET /', 'app.get', error);
     console.error('Error:', error);
     reply.status(500).json({ error: 'Internal server error' });
   }

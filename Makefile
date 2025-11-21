@@ -167,7 +167,7 @@ open-druid-minio:
 
 # Comando para iniciar algum job no Spark
 spark-submit:
-	docker exec -it spark-master spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 /src/streaming/$(job).py
+	docker exec -it spark-master /opt/spark/bin/spark-submit --conf spark.jars.ivy=/tmp/.ivy2 --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 /src/streaming/$(job).py
 
 # Comando para limpar o checkpoint do Spark
 spark-clean-checkpoint:

@@ -16,6 +16,9 @@ RUN apt-get update && apt-get install gnupg wget -y && \
 # Create working directory
 WORKDIR /app
 
+# Create logs folder
+RUN mkdir -p ./logs && chmod 777 ./logs
+
 # Copy package.json and package-lock.json
 COPY package*.json ./
 

@@ -4,6 +4,9 @@ FROM node:20
 # Create working directory
 WORKDIR /app
 
+# Create logs folder
+RUN mkdir -p ./logs && chmod 777 ./logs
+
 # Copy package.json and package-lock.json
 COPY package*.json ./
 

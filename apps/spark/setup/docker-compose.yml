@@ -2,8 +2,9 @@ version: "4"
 
 services:
   spark-master:
-    image: bitnami/spark:3.5.0
+    image: apache/spark:3.5.0
     container_name: spark-master
+    command: bash -c "/opt/spark/bin/spark-class org.apache.spark.deploy.master.Master"
     ports:
       - 7077:7077
       - 8089:8080
@@ -12,10 +13,13 @@ services:
       - ../src:/src
     environment:
       SPARK_MODE: master
+      SPARK_HOME: /opt/spark
+      SPARK_JAVA_OPTS: "-Dspark.jars.ivy=/tmp/.ivy2"
 
   spark-worker:
-    image: bitnami/spark:3.5.0
+    image: apache/spark:3.5.0
     container_name: spark-worker
+    command: bash -c "/opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077"
     ports:
       - 18081:8081
     volumes:
@@ -24,6 +28,7 @@ services:
       - spark-master
     environment:
       SPARK_MODE: worker
+      SPARK_HOME: /opt/spark
       SPARK_MASTER_URL: spark://spark-master:7077
       SPARK_WORKER_CORES: 2
       SPARK_WORKER_MEMORY: 2G
